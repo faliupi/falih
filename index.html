@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ayo Fokus - Sistem Monitoring Kelas Online</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* CSS Variables for easy theming */
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #a276ee;
+            --text-color: #333;
+            --light-text-color: #666;
+            --bg-light: #f0f4f8;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --border-color: #e1e5e9;
+            --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-strong: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-radius-sm: 8px;
+            --border-radius-md: 15px;
+            --border-radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-strong);
+            padding: 2.5rem;
+            width: 95%;
+            max-width: 1100px;
+            min-height: 550px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            -webkit-text-fill-color: initial;
+        }
+
+        .subtitle {
+            color: var(--light-text-color);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .screen {
+            display: none;
+            padding: 1rem;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 1.1rem 1.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1.1rem 2.2rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.6rem 0.5rem;
+            box-shadow: var(--shadow-light);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #495057);
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, var(--danger-color), #c82333);
+        }
+        .btn-danger:hover {
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(45deg, #e0a800, #c69500);
+            color: #212529;
+            box-shadow: 0 8px 20px rgba(224, 168, 0, 0.6);
+        }
+
+        .role-selection {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .role-card {
+            flex: 1;
+            min-width: 250px;
+            padding: 2.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: var(--shadow-light);
+        }
+
+        .role-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-7px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .role-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            box-shadow: var(--shadow-medium);
+        }
+        .role-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .role-card p {
+            color: var(--light-text-color);
+            font-size: 0.9rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .class-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius-md);
+            padding: 1.8rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .class-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .class-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            box-shadow: var(--shadow-medium);
+        }
+        .class-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+        }
+        .class-card p {
+            font-size: 0.95rem;
+            color: var(--light-text-color);
+            margin-bottom: 0.5rem;
+        }
+        .class-card small {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 1rem;
+            word-break: break-all;
+        }
+        .class-card small a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .class-card small a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .monitoring-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius-md);
+            padding: 1.8rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-light);
+        }
+
+        .info-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.6rem;
+            font-size: 1.1rem;
+        }
+
+        .info-card .info-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .monitoring-status {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: var(--success-color);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: var(--shadow-medium);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .monitoring-status.inactive {
+            background: var(--danger-color);
+        }
+
+        .auto-sync-indicator {
+            position: fixed;
+            top: 85px;
+            right: 25px;
+            background: rgba(var(--primary-color), 0.9);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.85rem;
+            z-index: 1000;
+            animation: pulseSync 2s infinite;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @keyframes pulseSync {
+            0%,
+            100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        .status-light {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            animation: pulseLight 2s infinite;
+            vertical-align: middle;
+        }
+
+        .status-light.green {
+            background: radial-gradient(circle, var(--success-color), #20c997);
+            box-shadow: 0 0 12px rgba(40, 167, 69, 0.6);
+        }
+
+        .status-light.red {
+            background: radial-gradient(circle, var(--danger-color), #fd7e14);
+            box-shadow: 0 0 12px rgba(220, 53, 69, 0.6);
+        }
+
+        .status-light:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulseLight {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Enhanced Warning Popup */
+        .enhanced-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInOverlay 0.3s ease;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .enhanced-popup-content {
+            background: #c51f1a;
+            border-radius: var(--border-radius-md);
+            padding: 10px;
+            max-width: 380px;
+            width: 90%;
+            animation: popupBounce 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .enhanced-popup-inner {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #c51f1a;
+        }
+
+        @keyframes popupBounce {
+            0% {
+                transform: scale(0.3) rotate(-8deg);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.05) rotate(2deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .enhanced-popup-title {
+            color: #8b0000;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .enhanced-popup-message {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .enhanced-popup-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: var(--shadow-light);
+        }
+
+        .enhanced-popup-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Modern Table Styling */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 1.5rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-light);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+        }
+
+        .table th,
+        .table td {
+            padding: 1.2rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .table th {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: rgba(240, 244, 248, 0.5);
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+            transition: background-color 0.2s ease;
+        }
+
+        .alert {
+            padding: 1.2rem;
+            border-radius: var(--border-radius-sm);
+            margin: 1.5rem 0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(var(--success-color), 0.1);
+            color: #155724;
+            border: 1px solid rgba(var(--success-color), 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(var(--danger-color), 0.1);
+            color: #721c24;
+            border: 1px solid rgba(var(--danger-color), 0.3);
+        }
+
+        .alert-info {
+            background: rgba(var(--primary-color), 0.1);
+            color: #0c5460;
+            border: 1px solid rgba(var(--primary-color), 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .container {
+                padding: 2rem;
+                max-width: 90%;
+            }
+            .header {
+                margin-bottom: 2rem;
+            }
+            .logo {
+                font-size: 2.2rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 1rem 1.8rem;
+                font-size: 0.95rem;
+            }
+            .role-card {
+                padding: 1.8rem;
+            }
+            .role-card h3 {
+                font-size: 1.3rem;
+            }
+            .class-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            .class-card {
+                padding: 1.5rem;
+            }
+            .monitoring-info-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+            .info-card .info-value {
+                font-size: 1.5rem;
+            }
+            .table th,
+            .table td {
+                padding: 1rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+                max-width: 95%;
+            }
+            .header {
+                margin-bottom: 1.5rem;
+            }
+            .logo {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .logo i {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            .form-group {
+                margin-bottom: 1.2rem;
+            }
+            input,
+            select,
+            textarea {
+                padding: 0.9rem 1rem;
+                font-size: 0.9rem;
+            }
+            .btn {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+            .role-selection {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .role-card {
+                min-width: unset;
+                width: 100%;
+                padding: 1.5rem;
+            }
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
+            .monitoring-info-grid {
+                grid-template-columns: 1fr;
+            }
+            .enhanced-popup-content {
+                max-width: 280px;
+                padding: 8px;
+            }
+            .enhanced-popup-title {
+                font-size: 1.4rem;
+            }
+            .enhanced-popup-message {
+                font-size: 0.9rem;
+            }
+            .enhanced-popup-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            .monitoring-status,
+            .auto-sync-indicator {
+                top: 15px;
+                right: 15px;
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+            .auto-sync-indicator {
+                top: 65px;
+            }
+            .status-light {
+                width: 18px;
+                height: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"><i class="fas fa-book-open"></i> Ayo Fokus</div>
+            <div class="subtitle">Sistem Monitoring Kelas Online</div>
+        </div>
+
+        <!-- Login/Register Screen -->
+        <div id="loginScreen" class="screen active">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Masukkan username Anda" />
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Masukkan password Anda" />
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <button class="btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button class="btn btn-secondary" onclick="showRegister()"><i class="fas fa-user-plus"></i> Daftar</button>
+            </div>
+            <div id="loginAlert"></div>
+        </div>
+
+        <!-- Register Screen -->
+        <div id="registerScreen" class="screen">
+            <div class="form-group">
+                <label for="regUsername"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="regUsername" placeholder="Masukkan username baru" />
+            </div>
+            <div class="form-group">
+                <label for="regPassword"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="regPassword" placeholder="Masukkan password" />
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user-tag"></i> Pilih Role</label>
+                <div class="role-selection">
+                    <div class="role-card" onclick="selectRole('mahasiswa', this)">
+                        <h3><i class="fas fa-user-graduate"></i> Mahasiswa</h3>
+                        <p>Bergabung dengan kelas dan monitoring</p>
+                    </div>
+                    <div class="role-card" onclick="selectRole('dosen', this)">
+                        <h3><i class="fas fa-chalkboard-teacher"></i> Dosen</h3>
+                        <p>Buat dan kelola kelas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <button class="btn" onclick="register()"><i class="fas fa-user-plus"></i> Daftar</button>
+                <button class="btn btn-secondary" onclick="showLogin()"><i class="fas fa-arrow-left"></i> Kembali ke Login</button>
+            </div>
+            <div id="registerAlert"></div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="studentDashboard" class="screen">
+            <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0;">Dashboard Mahasiswa</h2>
+                <button class="btn btn-secondary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <div class="form-group">
+                <h3><i class="fas fa-list-alt"></i> Pilih Kelas</h3>
+                <div id="classesList" class="class-grid"></div>
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <button class="btn" onclick="joinSelectedClass()"><i class="fas fa-door-open"></i> Masuk Kelas</button>
+                <button class="btn btn-secondary" onclick="refreshClasses()"><i class="fas fa-sync-alt"></i> Refresh Kelas</button>
+            </div>
+            <div id="studentAlert"></div>
+        </div>
+
+        <!-- Instructor Dashboard -->
+        <div id="instructorDashboard" class="screen">
+            <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0;">Dashboard Dosen</h2>
+                <button class="btn btn-secondary" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <div class="form-group">
+                <h3><i class="fas fa-plus-circle"></i> Buat Kelas Baru</h3>
+                <label for="className"><i class="fas fa-tag"></i> Nama Kelas</label>
+                <input type="text" id="className" placeholder="Contoh: Algoritma dan Pemrograman" />
+            </div>
+            <div class="form-group">
+                <label for="meetLink"><i class="fas fa-link"></i> Link Google Meet</label>
+                <input type="url" id="meetLink" placeholder="https://meet.google.com/xxx-xxxx-xxx" />
+            </div>
+            <div class="form-group">
+                <label for="classDescription"><i class="fas fa-info-circle"></i> Deskripsi</label>
+                <textarea id="classDescription" rows="3" placeholder="Deskripsi kelas (opsional)"></textarea>
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <button class="btn" onclick="createClass()"><i class="fas fa-plus"></i> Buat Kelas</button>
+                <button class="btn btn-secondary" onclick="refreshInstructorClasses()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+
+            <h3><i class="fas fa-chalkboard"></i> Kelas yang Anda Buat</h3>
+            <div id="instructorClassesList" class="class-grid"></div>
+            <div id="instructorAlert"></div>
+        </div>
+
+        <!-- Instructor Class Detail Screen -->
+        <div id="instructorClassDetailScreen" class="screen">
+            <div class="header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <h2 id="detailClassName" style="margin: 0;">Detail Kelas</h2>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="showInstructorDashboard()">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                    </button>
+                    <button class="btn btn-danger" id="deleteClassBtn" onclick="deleteClassFromDetail()">
+                        <i class="fas fa-trash-alt"></i> Hapus Kelas
+                    </button>
+                    <button class="btn btn-warning" id="clearDetailBtn" onclick="confirmClearClassData()">
+                        <i class="fas fa-broom"></i> Clear Data Kelas
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <h4><i class="fas fa-info-circle"></i> Informasi Kelas:</h4>
+                <p><strong>Nama:</strong> <span id="detailClassInfoName"></span></p>
+                <p><strong>Link Meet:</strong> <a id="detailClassInfoMeetLink" href="#" target="_blank"></a></p>
+                <p><strong>Deskripsi:</strong> <span id="detailClassInfoDescription"></span></p>
+            </div>
+            <div class="form-group">
+                <h4><i class="fas fa-users"></i> Daftar Mahasiswa:</h4>
+                <div id="detailClassStudentsList" class="table-responsive"></div>
+            </div>
+            <div id="detailClassAlert"></div>
+        </div>
+
+        <!-- Monitoring Screen -->
+        <div id="monitoringScreen" class="screen">
+            <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="currentClassName" style="margin: 0;">Monitoring Kelas</h2>
+                <button class="btn btn-danger" onclick="stopMonitoring()"><i class="fas fa-sign-out-alt"></i> Keluar dari Kelas</button>
+            </div>
+            <div class="form-group">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <strong>Monitoring Aktif!</strong><br />
+                    Sistem memantau aktivitas Anda dan otomatis menyinkronkan status.
+                </div>
+            </div>
+
+            <!-- Grid info cards -->
+            <div class="monitoring-info-grid">
+                <div class="info-card">
+                    <h4><i class="fas fa-eye"></i> Status Monitoring</h4>
+                    <div class="info-value" id="monitoringStatusText">Aktif</div>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fas fa-video"></i> Di Google Meet</h4>
+                    <div class="info-value" id="meetStatusText">Menunggu...</div>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Jumlah Peringatan</h4>
+                    <div class="info-value" id="warningCountText">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monitoring Status Indicator -->
+    <div id="monitoringStatus" class="monitoring-status inactive hidden">
+        <i class="fas fa-circle"></i> Status: Tidak Aktif
+    </div>
+
+    <!-- Auto-sync Status Indicator -->
+    <div id="autoSyncIndicator" class="auto-sync-indicator hidden">
+        <i class="fas fa-sync-alt"></i> Auto-sync aktif
+    </div>
+
+    <!-- Enhanced Warning Popup -->
+    <div id="enhancedWarningPopup" class="enhanced-popup-overlay">
+        <div class="enhanced-popup-content">
+            <div class="enhanced-popup-inner">
+                <div class="enhanced-popup-title">!! PERHATIAN !!</div>
+                <div class="enhanced-popup-message">
+                    Kamu terdeteksi tidak berada di Google Meet.<br />
+                    Harap segera kembali ke ruang kelas.
+                </div>
+                <button class="enhanced-popup-btn" onclick="handlePopupResponse()">Ya, Saya akan kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let selectedRole = null;
+        let selectedClass = null;
+        let currentInstructorClassId = null;
+        let monitoringActive = false;
+        let currentClassId = null;
+        let currentClassName = '';
+        let statusUpdateInterval = null;
+
+        // Monitoring variables
+        let popupActive = false;
+        let popupDismissedByUser = false;
+        let inMeet = false; // TRUE = dianggap ONLINE (berada di Meet/tab lain), FALSE = dianggap OFFLINE (fokus di web app)
+        let popupStartTime = null;
+        let warningCount = 0;
+        let monitoringSessionId = null;
+
+        // Focus/blur detection variables (not used for status, but kept for reference if needed)
+        // let blurTimer = null; 
+        // const BLUR_THRESHOLD_MS = 500; 
+        const WARNING_DELAY_MS = 10000; // Waktu (ms) sebelum popup muncul setelah dianggap offline
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Logging functions
+        function formatLocalTimestamp(date) {
+            const d = new Date(date);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const seconds = String(d.getSeconds()).padStart(2, '0');
+            
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function logMessage(msg) {
+            console.log(`[${formatLocalTimestamp(new Date())}] ${msg}`);
+        }
+
+        // Popup functions
+        function savePopupCount() {
+            if (!window.popupLog) window.popupLog = {};
+            const deviceId = 'browser_device';
+            window.popupLog[deviceId] = (window.popupLog[deviceId] || 0) + 1;
+        }
+
+        async function logWarningEvent(eventType, message) {
+            if (!currentUser || !currentClassId || !monitoringSessionId) {
+                console.warn("Cannot log event: Missing currentUser, currentClassId, or monitoringSessionId.");
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE}/monitoring/log`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentUser.token}`
+                    },
+                    body: JSON.stringify({
+                        class_id: currentClassId,
+                        event_type: eventType,
+                        message: message,
+                        source: 'web',
+                        session_id: monitoringSessionId,
+                        sync_id: `web_${Date.now()}_${eventType}`,
+                        original_timestamp: new Date().toISOString()
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    console.error(`[SYNC ERROR] Event '${eventType}' failed: ${data.message || response.statusText}`);
+                } else {
+                    logMessage(`[SYNC] Event '${eventType}' logged: ${JSON.stringify(data)}`);
+                }
+            } catch (error) {
+                console.error('Error logging event:', error);
+            }
+        }
+
+        function createEnhancedPopup() {
+            // Pop up hanya muncul jika monitoring aktif, dianggap OFFLINE (inMeet=false), pop-up tidak aktif, dan belum di-dismiss
+            if (!monitoringActive || inMeet || popupActive || popupDismissedByUser) {
+                logMessage(`[DEBUG] createEnhancedPopup() dibatalkan: monitoring=${monitoringActive}, inMeet=${inMeet}, popupActive=${popupActive}, dismissed=${popupDismissedByUser}`);
+                return;
+            }
+
+            popupActive = true;
+            popupStartTime = Date.now();
+            warningCount++;
+            
+            document.getElementById('warningCountText').textContent = warningCount;
+            savePopupCount();
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.warn('Could not play notification sound:', e);
+            }
+
+            document.getElementById('enhancedWarningPopup').style.display = 'flex';
+
+            setTimeout(() => {
+                if (popupActive) {
+                    logMessage('[WARNING] Pop-up timeout (tidak direspon dalam 60 detik).');
+                    closeEnhancedPopup(true);
+                    logWarningEvent('warning_timeout', 'Pop-up timeout (tidak direspon)');
+                }
+            }, 60000);
+
+            logMessage(`[INFO] Pop-up peringatan ditampilkan (#${warningCount}).`);
+            logWarningEvent('warning_shown_sync', 'Pop-up peringatan muncul');
+        }
+
+        function handlePopupResponse() {
+            const elapsed = Math.floor((Date.now() - popupStartTime) / 1000);
+            logMessage(`[INFO] Pop-up ditekan oleh pengguna pada detik ke-${elapsed}.`);
+            closeEnhancedPopup(true);
+            logWarningEvent('warning_acknowledged', `Pop-up ditekan oleh pengguna (${elapsed} detik)`);
+        }
+
+        function closeEnhancedPopup(dismissed = false) {
+            const popup = document.getElementById('enhancedWarningPopup');
+            if (popup) {
+                popup.style.display = 'none';
+            }
+            popupActive = false;
+            
+            if (dismissed) {
+                popupDismissedByUser = true;
+            }
+            
+            logMessage('[INFO] Pop-up ditutup.');
+        }
+
+        // Fungsi ini tidak lagi digunakan karena status diambil dari server
+        // function monitorGoogleMeetStatus() {
+        //     if (!monitoringActive) return;
+        //     document.getElementById('meetStatusText').textContent = inMeet ? 'Ya (Online)' : 'Tidak (Offline)';
+        //     setTimeout(monitorGoogleMeetStatus, 2000);
+        // }
+
+        function createStatusLight(isInMeet, studentId, studentName, classId) {
+            // Logika status light: green = inMeet=true (online), red = inMeet=false (offline)
+            const lightClass = isInMeet ? 'green' : 'red';
+            const title = isInMeet ? 'Mahasiswa sedang di Google Meet/tab lain' : 'Mahasiswa sedang fokus di web app';
+            
+            return `<div class="status-light ${lightClass}" 
+                         title="${title}"
+                         data-student-id="${studentId}">
+                    </div>`;
+        }
+
+        async function autoRefreshClassDetail() {
+            if (currentInstructorClassId) {
+                try {
+                    await loadInstructorClassDetail(currentInstructorClassId);
+                } catch (error) {
+                    console.error('Error auto-refreshing class detail:', error);
+                }
+            }
+        }
+
+        // Authentication functions
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showAlert('loginAlert', '<i class="fas fa-exclamation-circle"></i> Username dan password harus diisi.', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = {
+                        token: data.token,
+                        role: data.role,
+                        user_id: data.user_id,
+                        username: username
+                    };
+
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                    showAlert('loginAlert', '<i class="fas fa-check-circle"></i> Login berhasil!', 'success');
+
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+
+                    if (currentUser.role === 'mahasiswa') {
+                        showStudentDashboard();
+                        refreshClasses();
+                    } else if (currentUser.role === 'dosen') {
+                        showInstructorDashboard();
+                        refreshInstructorClasses();
+                    } else {
+                        showAlert('loginAlert', '<i class="fas fa-exclamation-circle"></i> Role pengguna tidak valid.', 'danger');
+                    }
+                } else {
+                    showAlert('loginAlert', `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Login gagal'}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                showAlert('loginAlert', '<i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat login. Periksa koneksi server.', 'danger');
+            }
+        }
+
+        async function register() {
+            const regUsername = document.getElementById('regUsername').value;
+            const regPassword = document.getElementById('regPassword').value;
+
+            if (!regUsername || !regPassword) {
+                showAlert('registerAlert', '<i class="fas fa-exclamation-circle"></i> Username dan password harus diisi.', 'danger');
+                return;
+            }
+
+            if (!selectedRole) {
+                showAlert('registerAlert', '<i class="fas fa-exclamation-circle"></i> Pilih role terlebih dahulu (Mahasiswa/Dosen)', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: regUsername, password: regPassword, role: selectedRole })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('registerAlert', `<i class="fas fa-check-circle"></i> ${data.message}`, 'success');
+                    document.getElementById('regUsername').value = '';
+                    document.getElementById('regPassword').value = '';
+                    selectedRole = null;
+                    document.querySelectorAll('.role-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    
+                    setTimeout(() => {
+                        showLogin();
+                    }, 2000);
+                } else {
+                    showAlert('registerAlert', `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Registrasi gagal'}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                showAlert('registerAlert', '<i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat registrasi. Periksa koneksi server.', 'danger');
+            }
+        }
+
+        function logout() {
+            if (monitoringActive) {
+                stopMonitoring();
+            }
+            
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+                statusUpdateInterval = null;
+            }
+            
+            currentUser = null;
+            selectedClass = null;
+            currentInstructorClassId = null;
+            monitoringSessionId = null;
+            localStorage.removeItem('currentUser'); // Hapus data user dari local storage
+            showLogin();
+            showAlert('loginAlert', '<i class="fas fa-info-circle"></i> Anda telah logout.', 'success');
+        }
+
+        // Screen navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showLogin() {
+            showScreen('loginScreen');
+            document.getElementById('monitoringStatus').classList.add('hidden');
+            document.getElementById('autoSyncIndicator').classList.add('hidden');
+        }
+
+        function showRegister() {
+            showScreen('registerScreen');
+            document.getElementById('monitoringStatus').classList.add('hidden');
+            document.getElementById('autoSyncIndicator').classList.add('hidden');
+        }
+
+        function showStudentDashboard() {
+            showScreen('studentDashboard');
+            document.getElementById('monitoringStatus').classList.add('hidden');
+            document.getElementById('autoSyncIndicator').classList.add('hidden');
+        }
+
+        function showInstructorDashboard() {
+            showScreen('instructorDashboard');
+            document.getElementById('monitoringStatus').classList.add('hidden');
+            document.getElementById('autoSyncIndicator').classList.add('hidden');
+            
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+                statusUpdateInterval = null;
+            }
+            currentInstructorClassId = null;
+            document.getElementById('detailClassStudentsList').innerHTML = '';
+            document.getElementById('detailClassName').innerText = 'Detail Kelas';
+            document.getElementById('detailClassInfoName').innerText = '';
+            document.getElementById('detailClassInfoMeetLink').href = '#';
+            document.getElementById('detailClassInfoMeetLink').innerText = '';
+            document.getElementById('detailClassInfoDescription').innerText = '';
+            document.getElementById('detailClassAlert').innerHTML = '';
+        }
+
+        async function showInstructorClassDetail(classId) {
+            currentInstructorClassId = classId;
+            showScreen('instructorClassDetailScreen');
+            
+            document.getElementById('autoSyncIndicator').classList.remove('hidden');
+            
+            document.getElementById('detailClassStudentsList').innerHTML = ''; 
+            document.getElementById('detailClassName').innerText = 'Detail Kelas';
+            document.getElementById('detailClassInfoName').innerText = '';
+            document.getElementById('detailClassInfoMeetLink').href = '#';
+            document.getElementById('detailClassInfoMeetLink').innerText = '';
+            document.getElementById('detailClassInfoDescription').innerText = '';
+            document.getElementById('detailClassAlert').innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Memuat detail kelas...</div>';
+            
+            try {
+                await loadInstructorClassDetail(classId);
+                
+                if (statusUpdateInterval) {
+                    clearInterval(statusUpdateInterval);
+                }
+                statusUpdateInterval = setInterval(() => {
+                    autoRefreshClassDetail();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error loading class detail:', error);
+                showAlert('detailClassAlert', `<i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat memuat detail kelas: ${error.message}. Kembali ke dashboard...`, 'danger');
+                setTimeout(() => {
+                    showInstructorDashboard();
+                }, 2000);
+            }
+        }
+
+        async function getWarningLogsForClass(classId) {
+            try {
+                const logsResponse = await fetch(`${API_BASE}/synchronized_logs/${classId}`, {
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+                if (!logsResponse.ok) {
+                    const errorData = await logsResponse.json();
+                    throw new Error(`Failed to fetch synchronized logs: ${errorData.message || logsResponse.statusText}`);
+                }
+                return await logsResponse.json();
+            } catch (error) {
+                console.error('Error fetching warning logs:', error);
+                return [];
+            }
+        }
+
+        function selectRole(role, element) {
+            selectedRole = role;
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        // Class management functions
+        async function refreshClasses() {
+            try {
+                const response = await fetch(`${API_BASE}/classes`, {
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const classes = await response.json();
+                const classesList = document.getElementById('classesList');
+                
+                if (classes.length === 0) {
+                    classesList.innerHTML = '<p style="text-align: center; color: var(--light-text-color);">Belum ada kelas tersedia.</p>';
+                    return;
+                }
+
+            classesList.innerHTML = classes.map(cls => `
+                <div class="class-card" onclick="selectClass(${cls.id}, this, '${escapeHtml(cls.name || '')}')">
+                    <h4>${escapeHtml(cls.name || 'Nama Kelas Tidak Tersedia')}</h4>
+                    <p><strong>Dosen:</strong> ${escapeHtml(cls.instructor_name || 'Tidak Diketahui')}</p>
+                    <p>${escapeHtml(cls.description || 'Tidak ada deskripsi')}</p>
+                    <small>Link: <a href="${escapeHtml(cls.meet_link || '#')}" target="_blank" onclick="event.stopPropagation();">${escapeHtml(cls.meet_link || 'Link Tidak Tersedia')}</a></small>
+                </div>
+            `).join('');
+            
+            } catch (error) {
+                console.error('Error refreshing classes:', error);
+                showAlert('studentAlert', `<i class="fas fa-exclamation-circle"></i> Gagal memuat daftar kelas. Periksa koneksi server: ${error.message}`, 'danger');
+            }
+        }
+
+        async function refreshInstructorClasses() {
+            try {
+                const response = await fetch(`${API_BASE}/classes`, {
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const classes = await response.json();
+                const instructorClassesList = document.getElementById('instructorClassesList');
+                
+                if (classes.length === 0) {
+                    instructorClassesList.innerHTML = '<p style="text-align: center; color: var(--light-text-color);">Anda belum membuat kelas.</p>';
+                    return;
+                }
+
+                instructorClassesList.innerHTML = classes.map(cls => `
+                    <div class="class-card" onclick="showInstructorClassDetail(${cls.id})">
+                        <h4>${escapeHtml(cls.name || 'Nama Kelas Tidak Tersedia')}</h4>
+                        <p><strong>Link:</strong> <a href="${escapeHtml(cls.meet_link || '#')}" target="_blank" onclick="event.stopPropagation();">${escapeHtml(cls.meet_link || 'Link Tidak Tersedia')}</a></p>
+                        <p>${escapeHtml(cls.description || 'Tidak ada deskripsi')}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error refreshing instructor classes:', error);
+                showAlert('instructorAlert', `<i class="fas fa-exclamation-circle"></i> Gagal memuat kelas Anda. Periksa koneksi server: ${error.message}`, 'danger');
+            }
+        }
+
+        async function loadInstructorClassDetail(classId) {
+            try {
+                const classDetailResponse = await fetch(`${API_BASE}/class_detail/${classId}`, {
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+
+                if (!classDetailResponse.ok) {
+                    const errorData = await classDetailResponse.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${classDetailResponse.status}`);
+                }
+
+                const classDetailData = await classDetailResponse.json();
+
+                if (classDetailData.class_info && classDetailData.students !== undefined) {
+                    const classInfo = classDetailData.class_info;
+                    const students = classDetailData.students;
+                    
+                    const warningLogs = await getWarningLogsForClass(classId); 
+
+                    const studentWarningCounts = new Map();
+                    warningLogs.forEach(log => {
+                        if (log.student_id && (log.event_type === 'warning_shown_sync' || log.event_type === 'desktop_warning_shown')) {
+                            studentWarningCounts.set(log.student_id, (studentWarningCounts.get(log.student_id) || 0) + 1);
+                        }
+                    });
+
+                    document.getElementById('detailClassName').innerText = `Detail Kelas: ${escapeHtml(classInfo.name || '')}`;
+                    document.getElementById('detailClassInfoName').innerText = escapeHtml(classInfo.name || '');
+                    document.getElementById('detailClassInfoMeetLink').href = escapeHtml(classInfo.meet_link || '#');
+                    document.getElementById('detailClassInfoMeetLink').innerText = escapeHtml(classInfo.meet_link || 'Link Tidak Tersedia');
+                    document.getElementById('detailClassInfoDescription').innerText = escapeHtml(classInfo.description || 'Tidak ada deskripsi');
+
+                    let studentListHtml = '';
+                    if (students.length === 0) {
+                        studentListHtml = '<p style="text-align: center; color: var(--light-text-color);">Belum ada mahasiswa terdaftar di kelas ini.</p>';
+                    } else {
+                        studentListHtml += `
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Tanggal Bergabung</th>
+                                        <th>Status Meet</th>
+                                        <th>Terdeteksi Keluar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+                        
+                        students.forEach(student => {
+                            const statusLight = createStatusLight(
+                                student.is_in_meet, 
+                                student.id, 
+                                escapeHtml(student.username || ''), 
+                                classId
+                            );
+                            const popupCount = studentWarningCounts.get(student.id) || 0;
+                            studentListHtml += `
+                                <tr>
+                                    <td>${escapeHtml(student.username || 'Tidak Diketahui')}</td>
+                                    <td>${formatLocalTimestamp(new Date(student.enrolled_at))}</td>
+                                    <td>${statusLight}</td>
+                                    <td>${popupCount}</td>
+                                </tr>`;
+                        });
+                        
+                        studentListHtml += '</tbody></table>';
+                    }
+                    document.getElementById('detailClassStudentsList').innerHTML = studentListHtml;
+
+                    document.getElementById('detailClassAlert').innerHTML = '';
+
+                } else {
+                    throw new Error('Data kelas tidak valid');
+                }
+            } catch (error) {
+                console.error('Error loading instructor class detail:', error);
+                showAlert('detailClassAlert', `<i class="fas fa-exclamation-circle"></i> Gagal memuat detail kelas: ${error.message}`, 'danger');
+            }
+        }
+
+        function selectClass(classId, element, className) {
+            selectedClass = classId;
+            currentClassName = className;
+            document.querySelectorAll('.class-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        async function createClass() {
+            const name = document.getElementById('className').value;
+            const meet_link = document.getElementById('meetLink').value;
+            const description = document.getElementById('classDescription').value;
+            
+            if (!name || !meet_link) {
+                showAlert('instructorAlert', '<i class="fas fa-exclamation-circle"></i> Nama kelas dan link Meet wajib diisi.', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/classes`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentUser.token}` 
+                    },
+                    body: JSON.stringify({ name, meet_link, description })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('instructorAlert', `<i class="fas fa-check-circle"></i> ${data.message}`, 'success');
+                    document.getElementById('className').value = '';
+                    document.getElementById('meetLink').value = '';
+                    document.getElementById('classDescription').value = '';
+                    refreshInstructorClasses();
+                } else {
+                    showAlert('instructorAlert', `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Gagal membuat kelas'}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error creating class:', error);
+                showAlert('instructorAlert', '<i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat membuat kelas.', 'danger');
+            }
+        }
+
+        async function deleteClassFromDetail() {
+            if (currentInstructorClassId) {
+                if (!confirm('Apakah Anda yakin ingin menghapus kelas ini? Semua data terkait akan ikut terhapus.')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_BASE}/classes/${currentInstructorClassId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        showAlert('detailClassAlert', `<i class="fas fa-check-circle"></i> Kelas berhasil dihapus. Kembali ke dashboard...`, 'success');
+                        setTimeout(() => {
+                            showInstructorDashboard();
+                            refreshInstructorClasses();
+                        }, 2000);
+                    } else {
+                        showAlert('detailClassAlert', `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Gagal menghapus kelas'}`, 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error deleting class:', error);
+                    showAlert('detailClassAlert', '<i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat menghapus kelas.', 'danger');
+                }
+            }
+        }
+
+        function confirmClearClassData() {
+            if (!currentInstructorClassId) {
+                showAlert('detailClassAlert', '<i class="fas fa-exclamation-circle"></i> Tidak ada kelas yang dipilih untuk dibersihkan datanya.', 'danger');
+                return;
+            }
+
+            if (confirm('Apakah Anda yakin ingin membersihkan SEMUA data mahasiswa dari kelas ini secara PERMANEN? Tindakan ini tidak dapat dibatalkan.')) {
+                clearClassDataPermanently(currentInstructorClassId);
+            }
+        }
+
+        async function clearClassDataPermanently(classId) {
+            try {
+                if (statusUpdateInterval) {
+                    clearInterval(statusUpdateInterval);
+                    statusUpdateInterval = null;
+                }
+
+                showAlert('detailClassAlert', '<i class="fas fa-spinner fa-spin"></i> Membersihkan data mahasiswa dan log monitoring...', 'info');
+
+                const response = await fetch(`${API_BASE}/classes/${classId}/clear_student_data`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('detailClassStudentsList').innerHTML = '<p style="text-align: center; color: var(--light-text-color);">Belum ada mahasiswa terdaftar di kelas ini.</p>';
+                    document.getElementById('detailClassAlert').innerHTML = '';
+                    showAlert('detailClassAlert', `<i class="fas fa-check-circle"></i> ${data.message || 'Data kelas berhasil dibersihkan.'}`, 'success');
+                    
+                    await loadInstructorClassDetail(classId); 
+
+                } else {
+                    let errorMessage = `Gagal membersihkan data kelas: HTTP error! status: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (jsonError) {
+                        errorMessage = response.statusText || errorMessage;
+                    }
+                    showAlert('detailClassAlert', `<i class="fas fa-exclamation-circle"></i> ${errorMessage}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error clearing class data permanently:', error);
+                showAlert('detailClassAlert', '<i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat membersihkan data kelas. Periksa koneksi server.', 'danger');
+            }
+        }
+
+        async function joinSelectedClass() {
+            if (!selectedClass) {
+                showAlert('studentAlert', '<i class="fas fa-exclamation-circle"></i> Pilih kelas terlebih dahulu', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/classes/${selectedClass}/enroll`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok || response.status === 409) {
+                    currentClassId = selectedClass;
+                    monitoringSessionId = generateSessionId(); // Generate session ID for web app
+
+                    const selectedCard = document.querySelector(`.class-card[onclick*="selectClass(${selectedClass}"]`);
+                    const meetLink = selectedCard ? selectedCard.querySelector('small a').href : null;
+
+                    showScreen('monitoringScreen');
+                    document.getElementById('currentClassName').innerText = currentClassName;
+                    startMonitoring();
+
+                    if (meetLink) {
+                        logMessage('[INFO] Auto-sync: Membuka Google Meet di tab baru.');
+                        window.open(meetLink, '_blank');
+                        // Status inMeet akan diatur oleh polling dari server, yang akan menerima dari desktop monitor
+                    } else {
+                        alert('Link Google Meet untuk kelas ini belum tersedia.');
+                        // Jika tidak ada link Meet, web app akan tetap poll status dari server.
+                        // Jika desktop monitor tidak mendeteksi Meet, maka status akan tetap offline.
+                    }
+                } else {
+                    showAlert('studentAlert', `<i class="fas fa-exclamation-circle"></i> ${data.message}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error joining class:', error);
+                showAlert('studentAlert', '<i class="fas fa-exclamation-circle"></i> Gagal bergabung ke kelas', 'danger');
+            }
+        }
+
+        // Monitoring functions
+        // --- START PATCH FOR index.html (startMonitoring, pollStudentStatus, stopMonitoring) ---
+        function startMonitoring() {
+            monitoringActive = true;
+            document.getElementById('monitoringStatus').classList.remove('hidden', 'inactive');
+            document.getElementById('monitoringStatus').innerHTML = '<i class="fas fa-circle" id="statusLampu"></i> Status: Monitoring Aktif';
+            document.getElementById('autoSyncIndicator').classList.remove('hidden');
+            document.getElementById('monitoringStatusText').textContent = 'Aktif';
+            document.getElementById('meetStatusText').textContent = 'Menunggu...';
+            document.getElementById('warningCountText').textContent = '0';
+            
+            logMessage('[INFO] Monitoring dimulai untuk kelas: ' + currentClassName);
+            logWarningEvent('monitoring_started', 'Monitoring web dimulai');
+            
+            if (statusUpdateInterval) clearInterval(statusUpdateInterval);
+            statusUpdateInterval = setInterval(pollStudentStatus, 3000);
+        }
+
+        async function pollStudentStatus() {
+            if (!currentUser || !currentClassId) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/student_current_status?class_id=${currentClassId}`, {
+                    headers: { "Authorization": `Bearer ${currentUser.token}` }
+                });
+                if (!res.ok) {
+                    console.error(`[POLLING ERROR] Failed to get student status: ${res.status} ${res.statusText}`);
+                    // Assume offline if API call fails
+                    document.getElementById("meetStatusText").textContent = "Tidak (Offline)";
+                    document.getElementById("statusLampu").style.color = "red";
+                    if (!popupActive && monitoringActive && !popupDismissedByUser) {
+                        createEnhancedPopup();
+                    }
+                    return;
+                }
+                const data = await res.json();
+
+                if (data.is_in_meet) {
+                    document.getElementById("meetStatusText").textContent = "Ya (Online)";
+                    document.getElementById("statusLampu").style.color = "green";
+                    if (popupActive) {
+                        closeEnhancedPopup();
+                    }
+                    popupDismissedByUser = false; // Reset dismissed flag when back in meet
+                } else {
+                    document.getElementById("meetStatusText").textContent = "Tidak (Offline)";
+                    document.getElementById("statusLampu").style.color = "red";
+                    if (!popupActive && monitoringActive && !popupDismissedByUser) {
+                        createEnhancedPopup();
+                    }
+                }
+            } catch (e) {
+                console.error("Polling error", e);
+                // Assume offline if network error
+                document.getElementById("meetStatusText").textContent = "Tidak (Offline)";
+                document.getElementById("statusLampu").style.color = "red";
+                if (!popupActive && monitoringActive && !popupDismissedByUser) {
+                    createEnhancedPopup();
+                }
+            }
+        }
+
+        function stopMonitoring() {
+            monitoringActive = false;
+            if (statusUpdateInterval) clearInterval(statusUpdateInterval);
+            statusUpdateInterval = null; // Clear the interval ID
+            document.getElementById('monitoringStatusText').textContent = 'Tidak Aktif';
+            document.getElementById('monitoringStatus').classList.add('inactive');
+            document.getElementById('monitoringStatus').innerHTML = '<i class="fas fa-circle"></i> Status: Tidak Aktif';
+            document.getElementById('autoSyncIndicator').classList.add('hidden');
+
+            if (popupActive) {
+                closeEnhancedPopup();
+            }
+            
+            logMessage('[INFO] Monitoring dihentikan');
+            if (currentClassId && currentUser && monitoringSessionId) {
+                logWarningEvent('monitoring_stopped', 'Monitoring web dihentikan');
+            }
+            
+            showStudentDashboard();
+        }
+        // --- END PATCH FOR index.html (startMonitoring, pollStudentStatus, stopMonitoring) ---
+
+
+        // Utility functions
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        function generateSessionId() {
+            return 'web-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+            
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+            
+            document.getElementById('regPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    register();
+                }
+            });
+
+            // Hapus event listener blur/focus yang lama karena sekarang status diambil dari server
+            // window.addEventListener('blur', function() { /* ... */ });
+            // window.addEventListener('focus', function() { /* ... */ });
+        });
+
+        // Initialize app
+        window.addEventListener('load', () => {
+            // Hapus kode auto-login, selalu tampilkan halaman login
+            showLogin();
+        });
+    </script>
+
+</body>
+</html>

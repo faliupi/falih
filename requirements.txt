@@ -1,0 +1,7 @@
+Flask==2.3.3
+Flask-Cors==4.0.0
+Flask-Migrate==4.0.5
+Flask-SQLAlchemy==3.0.5
+mysql-connector-python==9.0.0
+PyJWT==2.8.0
+Werkzeug==2.3.7
